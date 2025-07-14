@@ -20,22 +20,28 @@ def main():
         num2 = int(num2)
 
         operator = input("연산자 입력 (+, -, *, /): ")
-
-        if operator == '+': 
-            print(f'Result: {add(num1, num2)}')
+ 
+        result = None
+        if operator == '+':
+            result = add(num1, num2)
         elif operator == '-':
-            print(f'Result: {subtract(num1, num2)}')
+            result = subtract(num1, num2)
         elif operator == '*':
-            print(f'Result: {multiply(num1, num2)}')
+            result = multiply(num1, num2)
         elif operator == '/':
-            print(f'Result: {divide(num1, num2)}')
+            result = divide(num1, num2)
+
+        if result is not None:
+            msg = f'Result: {result}'
         else:
-            print("Invalid operator.")
+            msg = "Invalid operator."
+
+        print(msg)
 
     except ValueError:
         print("오류: 정확한 두 개의 '정수'를 공백으로 구분하여 입력해야 합니다.")
 
-    # 0으로 나누려고 시도했을 때
+    # 0으로 나누려고 시도했을 때 에러 처리
     except ZeroDivisionError:
         print("Error: Division by zero.")
         
