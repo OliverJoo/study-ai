@@ -14,7 +14,7 @@ def divide(a, b):
 
 def main():
     while True:
-        expression = input("계산할 식을 입력하세요 (예: 10 + 5). 종료하려면 'exit'를 입력하세요: ")
+        expression = input("계산할 식 입력 (예: 10 + 5). 종료하려면 'exit' 입력: ")
 
         if expression.lower() == 'exit':
             print("계산기를 종료합니다.")

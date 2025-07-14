@@ -14,9 +14,12 @@ def divide(a, b):
 
 def main():
     try:
-        num1, num2 = map(int, input('두 개의 정수를 공백으로 구분하여 입력: ').split())
+        num1, num2 = map(float, input('실수형 숫자 2개 입력를 공백으로 구분하여 입력: ').split())
+        
+        num1 = int(num1)
+        num2 = int(num2)
 
-        operator = input("원하는 연산자를 입력하세요 (+, -, *, /): ")
+        operator = input("연산자 입력 (+, -, *, /): ")
 
         if operator == '+': 
             print(f'Result: {add(num1, num2)}')
