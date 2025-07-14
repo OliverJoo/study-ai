@@ -6,6 +6,10 @@ app = Flask(__name__)
 def hello_world():
     return "Hello, DevOps!"
 
+@app.route("/about")
+def about():
+    return "<h2>이것은 소개 페이지입니다.</h2>"
+
 if __name__ == "__main__":
     # app.run(host='0.0.0.0', port=80) 
     app.run()
