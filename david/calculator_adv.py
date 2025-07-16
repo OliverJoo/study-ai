@@ -15,6 +15,10 @@ def divide(a, b):
 def main():
     try:
         expression = input('Enter expression: ')
+        
+        # 제한없이 받아들이고자 할 경우
+        # numbers = list(map(float, input('원하는 만큼 실수를 공백으로 구분하여 입력: ').split()))
+
 
         parts = expression.split()
 
