@@ -20,8 +20,8 @@ def main():
         numbers = [float(num) for num in input_str]
 
         if not numbers:
-            print("Invalid input.")
-            return  
+            # print("Invalid input.")
+            raise ValueError
 
         sorted_numbers = selection_sort(numbers)
 
