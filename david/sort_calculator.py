@@ -14,7 +14,7 @@ def selection_sort(numbers):
 
 
 def main():
-    try: 
+    try:  
         input_str = input("숫자를 공백으로 구분하여 입력: ").split()
 
         numbers = [float(num) for num in input_str]
