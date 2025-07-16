@@ -18,7 +18,7 @@ def home():
     return Response(fp.getvalue(), mimetype='audio/mpeg') # 페이지 전달없이 바로 재생
 
 if __name__ == '__main__':
-    app.run('0.0.0.0', 8080)
+    app.run('127.0.0.1', 5000)
     # app.run()
     # app.run(port=80)
     # app.run('0.0.0.0')
