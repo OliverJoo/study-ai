@@ -21,7 +21,7 @@ def main():
 
         if not numbers:
             print("Invalid input.")
-            return
+            return 
 
         sorted_numbers = selection_sort(numbers)
 
