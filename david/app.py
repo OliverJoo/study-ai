@@ -90,7 +90,7 @@ def home():
         # Validation for available langs
         if lang not in SUPPORTED_LANGUAGES:
             context["error"] = "지원되지 않는 언어입니다."
-        elif not text or not text.strip():  # elif로 변경하여 더 깔끔하게 처리
+        elif not text or not text.strip():  
             context["error"] = "음성으로 변환할 텍스트를 입력해주세요."
         else:
             try:
@@ -103,7 +103,7 @@ def home():
                 audio_b64 = base64.b64encode(fp.read()).decode("utf-8")
                 context["audio"] = audio_b64
             except Exception as e:
-                print(f"An error occurred: {e}")
+                # print(f"An error occurred: {e}")
                 app.logger.error(f"gTTS Error for input '{text}': {e}")
                 context["error"] = (
                     "음성 변환에 실패했습니다. 유효하지 않은 언어이거나 네트워크 문제일 수 있습니다."
