@@ -22,7 +22,6 @@ file_handler.setFormatter(formatter)
 app.logger.addHandler(file_handler)
 app.logger.setLevel(logging.INFO)
 
-
 # gTTS available langs
 SUPPORTED_LANGUAGES = tts_langs()
 
@@ -64,7 +63,7 @@ HTML_TEMPLATE = """
       </audio>
       <div class="download-container">
         <a href="data:audio/mpeg;base64,{{ audio }}" download="tts_output.mp3" class="download-link">
-        MP3로 저장하기 📥
+        MP3로 저장하기!
         </a>
       </div>
     {% endif %}
@@ -84,39 +83,31 @@ def home():
         text = request.form.get("input_text")
         lang = request.form.get("lang", DEFAULT_LANG)
 
-        # 컨텍스트 업데이트
+        # context update but left input data
         context["input_text"] = text
         context["selected_lang"] = lang
 
         # Validation for available langs
         if lang not in SUPPORTED_LANGUAGES:
             context["error"] = "지원되지 않는 언어입니다."
-            return render_template_string(HTML_TEMPLATE, **context)
+        elif not text or not text.strip():  # elif로 변경하여 더 깔끔하게 처리
+            context["error"] = "음성으로 변환할 텍스트를 입력해주세요."
+        else:
+            try:
+                app.logger.info(f"Lang: {lang}, Text: {text}")
 
-        # Exception Handling: Empty text case
-        if not text or not text.strip():
-            return render_template_string(
-                HTML_TEMPLATE,
-                error="음성으로 변환할 텍스트를 입력해주세요.",
-                selected_lang=lang,
-            )
-
-        try:
-            app.logger.info(f"Lang: {lang}, Text: {text}")
-
-            fp = BytesIO()
-            tts = gTTS(text=text, lang=lang, tld="com")
-            tts.write_to_fp(fp)
-            fp.seek(0)
-            audio_b64 = base64.b64encode(fp.read()).decode("utf-8")
-            context["audio"] = audio_b64
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            app.logger.error(f"gTTS Error for input '{text}': {e}")
-
-            context["error"] = (
-                "음성 변환에 실패했습니다. 유효하지 않은 언어이거나 네트워크 문제일 수 있습니다."
-            )
+                fp = BytesIO()
+                tts = gTTS(text=text, lang=lang, tld="com")
+                tts.write_to_fp(fp)
+                fp.seek(0)
+                audio_b64 = base64.b64encode(fp.read()).decode("utf-8")
+                context["audio"] = audio_b64
+            except Exception as e:
+                print(f"An error occurred: {e}")
+                app.logger.error(f"gTTS Error for input '{text}': {e}")
+                context["error"] = (
+                    "음성 변환에 실패했습니다. 유효하지 않은 언어이거나 네트워크 문제일 수 있습니다."
+                )
 
     return render_template_string(HTML_TEMPLATE, **context)
 
