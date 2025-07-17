@@ -7,7 +7,7 @@ def main():
 
     try:
         exponent = int(input("Enter exponent: "))
-    except:
+    except ValueError:
         print("Invalid expponent input")
         return
 
