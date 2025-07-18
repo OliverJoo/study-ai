@@ -28,6 +28,7 @@ SUPPORTED_LANGUAGES = tts_langs()
 # Default Language Setting
 DEFAULT_LANG = os.getenv("DEFAULT_LANG", "ko")
 
+
 # HTML Template
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -90,7 +91,7 @@ def home():
         # Validation for available langs
         if lang not in SUPPORTED_LANGUAGES:
             context["error"] = "지원되지 않는 언어입니다."
-        elif not text or not text.strip():  
+        elif not text or not text.strip():
             context["error"] = "음성으로 변환할 텍스트를 입력해주세요."
         else:
             try:
