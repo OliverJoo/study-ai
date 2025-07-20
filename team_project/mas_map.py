@@ -41,11 +41,26 @@ def analysis_main():
     merged_df.sort_values(by="area", inplace=True)
 
     # 4. Filtering by 'area = 1'
-    filtered_df = merged_df[merged_df['area'] == 1]
+    filtered_df = merged_df[merged_df["area"] == 1]
 
-    # For demonstration, print the head of the final merged DataFrame
-    print("--- Merged and Sorted DataFrame ---")
-    print(filtered_df)
+    # Save the filtered DataFrame to a CSV file
+    output_path = os.path.join(base_dir, "mas_map.csv")
+    filtered_df.to_csv(output_path, index=False)
+
+    # Save the filtered DataFrame to a CSV file
+    output_path = os.path.join(base_dir, "mas_map.csv")
+    filtered_df.to_csv(output_path, index=False)
+    print(f"Filtered data saved to {output_path}")
+
+    # Generate and print the summary statistics report for the 'struct' column
+    print("\n--- Summary Statistics Report for 'struct' column ---")
+    struct_summary = filtered_df['struct'].describe()
+    struct_counts = filtered_df['struct'].value_counts()
+    
+    print("\nValue Counts:")
+    print(struct_counts)
+    print("\nDescription:")
+    print(struct_summary)
     print()
 
 
