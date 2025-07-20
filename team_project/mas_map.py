@@ -1,6 +1,5 @@
 # Data Analysis
 import pandas as pd
-import matplotlib
 import os
 
 # Set pandas display options to show all data
@@ -25,7 +24,8 @@ def analysis_main():
     }
 
     # Rename the column ' struct' to 'struct' in area_category dataframe
-    data_frames["area_category"].rename(columns={" struct": "struct"}, inplace=True)
+    data_frames["area_category"].rename(
+        columns={" struct": "struct"}, inplace=True)
 
     # 1. Merge area_struct with area_map on ['x', 'y']
     merged_df = pd.merge(
@@ -40,27 +40,24 @@ def analysis_main():
     # 3. Sort the final DataFrame by 'area'
     merged_df.sort_values(by="area", inplace=True)
 
+    # Save the filtered DataFrame to a CSV file
+    output_path = os.path.join(data_dir, "mas_map.csv")
+    merged_df.to_csv(output_path, index=False)
+
     # 4. Filtering by 'area = 1'
     filtered_df = merged_df[merged_df["area"] == 1]
-
-    # Save the filtered DataFrame to a CSV file
-    output_path = os.path.join(base_dir, "mas_map.csv")
-    filtered_df.to_csv(output_path, index=False)
-
-    # Save the filtered DataFrame to a CSV file
-    output_path = os.path.join(base_dir, "mas_map.csv")
-    filtered_df.to_csv(output_path, index=False)
-    print(f"Filtered data saved to {output_path}")
 
     # Generate and print the summary statistics report for the 'struct' column
     print("\n--- Summary Statistics Report for 'struct' column ---")
     struct_summary = filtered_df['struct'].describe()
     struct_counts = filtered_df['struct'].value_counts()
-    
+
     print("\nValue Counts:")
     print(struct_counts)
     print("\nDescription:")
     print(struct_summary)
+    print()
+    print(filtered_df)
     print()
 
 
