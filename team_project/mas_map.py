@@ -24,8 +24,7 @@ def analysis_main():
     }
 
     # Rename the column ' struct' to 'struct' in area_category dataframe
-    data_frames["area_category"].rename(
-        columns={" struct": "struct"}, inplace=True)
+    data_frames["area_category"].rename(columns={" struct": "struct"}, inplace=True)
 
     # 1. Merge area_struct with area_map on ['x', 'y']
     merged_df = pd.merge(
@@ -49,8 +48,8 @@ def analysis_main():
 
     # Generate and print the summary statistics report for the 'struct' column
     print("\n--- Summary Statistics Report for 'struct' column ---")
-    struct_summary = filtered_df['struct'].describe()
-    struct_counts = filtered_df['struct'].value_counts()
+    struct_summary = filtered_df["struct"].describe()
+    struct_counts = filtered_df["struct"].value_counts()
 
     print("\nValue Counts:")
     print(struct_counts)

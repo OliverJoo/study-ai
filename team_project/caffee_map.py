@@ -24,8 +24,7 @@ def analysis_main():
     }
 
     # Rename the column ' struct' to 'struct' in area_category dataframe
-    data_frames["area_category"].rename(
-        columns={" struct": "struct"}, inplace=True)
+    data_frames["area_category"].rename(columns={" struct": "struct"}, inplace=True)
 
     # 1. Merge area_struct with area_map on ['x', 'y']
     merged_df = pd.merge(
@@ -39,7 +38,7 @@ def analysis_main():
 
     # 3. Sort the final DataFrame by 'area'
     merged_df.sort_values(by="area", inplace=True)
-    print('\nStruct:')
+    print("\nStruct:")
     print(f"{merged_df['struct'].value_counts()}\n")
 
     # Save the filtered DataFrame to a CSV file
@@ -51,8 +50,8 @@ def analysis_main():
 
     # Generate and print the summary statistics report for the 'struct' column
     print("\n--- Summary Statistics Report for 'struct in area-1' column ---")
-    struct_summary = filtered_df['struct'].describe()
-    struct_counts = filtered_df['struct'].value_counts()
+    struct_summary = filtered_df["struct"].describe()
+    struct_counts = filtered_df["struct"].value_counts()
 
     print("\nValue Counts:")
     print(struct_counts)
