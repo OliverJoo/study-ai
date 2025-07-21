@@ -32,26 +32,13 @@ def draw_main():
     df = df.sort_values(by="ConstructionSite", ascending=True)
 
     # Define markers and colors for other structures
+    # marker code : 'o' - Circle, 's' - Square, '^' - Triangle Up, 'v' - Triangle Down, '>' - Triangle Right, '<' - Triangle Left, 'd' - Diamond, 'p' - Pentagon, 'h' - Hexagon, '*' - Star, '+' - Plus, 'x' - X, '.' - Point, '_' - Horizontal Line, '|' - Vertical Line
     markers = {
         "apartment": ("o", "brown"),
         "building": ("o", "brown"),
         "bandalgomcoffee": ("s", "green"),
         "myhome": ("^", "green"),
     }
-
-    # -- struct value count --
-    # Apartment          5
-    # Building           4
-    # BandalgomCoffee    2
-    # MyHome             1
-
-    # data overlap - (5, 5): Apartment, ConstructionSite=1
-    # data overlap - (14, 5): Apartment, ConstructionSite=1
-    # data overlap - (8, 11): Apartment, ConstructionSite=1
-
-    # Apartment (갈색 원): 2개 (겹치지 않는 것)
-    # Building (갈색 원): 4개 (겹치지 않는 것)
-    # 총 갈색 원: 6개
 
     # 4. & 5. Plot each point based on its type
     for _, row in df.iterrows():
@@ -74,6 +61,21 @@ def draw_main():
             if struct_type in markers:
                 marker, color = markers[struct_type]
                 ax.plot(x, y, marker=marker, color=color, markersize=10)
+
+
+    # -- struct value count --
+    # Apartment          5
+    # Building           4
+    # BandalgomCoffee    2
+    # MyHome             1
+
+    # data overlap - (5, 5): Apartment, ConstructionSite=1
+    # data overlap - (14, 5): Apartment, ConstructionSite=1
+    # data overlap - (8, 11): Apartment, ConstructionSite=1
+
+    # Apartment (brown circle): 2개 (no overlap)
+    # Building (brown circle): 4개 (no overlap)
+    # total brown circle: 6개
 
     # 8. (Bonus) Add legend
     legend_elements = [
