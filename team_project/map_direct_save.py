@@ -7,9 +7,8 @@ from collections import deque
 import heapq
 import itertools
 
+
 # --- Utility to convert grid to graph representation ---
-
-
 def grid_to_graph(grid):
     rows, cols = len(grid), len(grid[0])
     nodes = []
@@ -356,115 +355,6 @@ def main():
             draw_map_with_path(df, shortest_path, map_output_filename)
         else:
             print("No path found to any cafe.")
-
-    # --- Bonus: Calculating TSP Path from Bandal Gom Coffee to My Home visiting all structures ---
-    print("\n--- Bonus: Calculating Optimal Path ---")
-
-    try:
-        fw_get_path, fw_get_dist = floyd_warshall(grid)
-
-        # 모든 구조물 정보 추출 (건설 현장 제외)
-        all_structures = df[df["ConstructionSite"] == 0].copy()
-        waypoints = {}
-        for _, row in all_structures.iterrows():
-            struct_name = str(row["struct"]).strip().replace("_", "").lower()
-            waypoints[f"{struct_name}_{row.name}"] = (row["y"], row["x"])
-
-        # 시작점과 끝점 찾기
-        bandalgom_coffee_key = None
-        myhome_key = None
-        for key in waypoints:
-            if "bandalgomcoffee" in key:
-                bandalgom_coffee_key = key
-                break
-        for key in waypoints:
-            if "myhome" in key:
-                myhome_key = key
-                break
-
-        # 변수 초기화를 조건문 밖으로 이동
-        best_path_sequence = None
-        best_full_path = None
-
-        if not bandalgom_coffee_key or not myhome_key:
-            print("Error: 'Bandal Gom Coffee' or 'My Home' not found in structures.")
-        else:
-            # 중간 경유지들 추출
-            other_waypoints_keys = [
-                key
-                for key in waypoints
-                if key != bandalgom_coffee_key and key != myhome_key
-            ]
-
-            min_total_dist = float("inf")
-
-            # 성능 최적화: 경유지가 너무 많으면 경고 메시지
-            if len(other_waypoints_keys) > 8:
-                print(
-                    f"Warning: {len(other_waypoints_keys)} waypoints detected. "
-                    f"This may take considerable time to compute."
-                )
-
-            # TSP 계산: 모든 순열 검사
-            for permutation in itertools.permutations(other_waypoints_keys):
-                current_sequence_keys = (
-                    [bandalgom_coffee_key] + list(permutation) + [myhome_key]
-                )
-                current_total_dist = 0
-                path_segments = []
-
-                # 각 구간의 최단 경로 계산
-                valid_path = True
-                for i in range(len(current_sequence_keys) - 1):
-                    start_key = current_sequence_keys[i]
-                    end_key = current_sequence_keys[i + 1]
-
-                    dist = fw_get_dist(waypoints[start_key], waypoints[end_key])
-                    if dist == float("inf"):
-                        valid_path = False
-                        break
-
-                    current_total_dist += dist
-                    segment_path = fw_get_path(waypoints[start_key], waypoints[end_key])
-                    if segment_path:
-                        path_segments.append(segment_path)
-
-                # 더 나은 경로 발견 시 업데이트
-                if valid_path and current_total_dist < min_total_dist:
-                    min_total_dist = current_total_dist
-                    best_path_sequence = current_sequence_keys
-
-                    # 전체 경로 재구성 (중복 노드 제거)
-                    best_full_path = []
-                    for i, segment in enumerate(path_segments):
-                        if i == 0:
-                            best_full_path.extend(segment)
-                        else:
-                            # 첫 번째 노드는 이전 세그먼트의 마지막 노드와 중복되므로 제외
-                            best_full_path.extend(segment[1:])
-
-        # 결과 출력 및 시각화
-        if best_path_sequence and best_full_path:
-            print(f"Optimal Path found with distance {min_total_dist}:")
-            readable_sequence = " -> ".join(
-                [key.split("_")[0] for key in best_path_sequence]
-            )
-            print(readable_sequence)
-
-            # 결과 이미지 저장
-            bonus_output_filename = os.path.join(
-                base_dir, "result_img", "map_final_bonus.png"
-            )
-
-            # 디렉토리 생성 (존재하지 않을 경우)
-            os.makedirs(os.path.dirname(bonus_output_filename), exist_ok=True)
-            draw_map_with_path(df, best_full_path, bonus_output_filename)
-        else:
-            print("Could not find an optimal path that visits all structures.")
-
-    except Exception as e:
-        print(f"Error during TSP calculation: {str(e)}")
-        print("Please check your data and try again.")
 
 
 if __name__ == "__main__":
