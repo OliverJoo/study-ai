@@ -40,8 +40,6 @@ def grid_to_graph(grid):
 
 
 # --- Pathfinding Algorithms ---
-
-
 def bfs(grid, start, end):
     """Breadth-First Search (Single Source Shortest Path)."""
     rows, cols = len(grid), len(grid[0])
@@ -236,8 +234,6 @@ def johnson(grid):
 
 
 # --- Main Drawing and Pathfinding Logic ---
-
-
 def draw_map_with_path(df, path, output_filename):
     # (This function remains unchanged from the previous version)
     fig, ax = plt.subplots(figsize=(12, 12))
@@ -324,12 +320,8 @@ def main():
         grid[row["y"]][row["x"]] = 1
 
     try:
-        my_home = df[
-            df["struct"].str.strip().replace("_", "").str.lower() == "myhome"
-        ].iloc[0]
-        cafes = df[
-            df["struct"].str.strip().replace("_", "").str.lower() == "bandalgomcoffee"
-        ]
+        my_home = df[df["struct"].str.strip().replace("_", "").str.lower() == "myhome"].iloc[0]
+        cafes = df[df["struct"].str.strip().replace("_", "").str.lower() == "bandalgomcoffee"]
         start_pos = (my_home["y"], my_home["x"])
     except (IndexError, KeyError):
         print("Error: 'My Home' or 'Bandal Gom Coffee' not found.")
@@ -359,62 +351,139 @@ def main():
     else:
         print("No path found to any cafe.")
 
-    # --- 7. (Bonus) Traveling Salesperson Problem ---
-    print("\n--- Bonus: Calculating TSP Path ---")
+    # --- Bonus: Calculating TSP Path from Bandal Gom Coffee to My Home visiting all structures (excluding construction sites) ---
+    print("\n--- Bonus: Calculating Optimal Path ---")
 
-    # Use Floyd-Warshall for efficient all-pairs calculation
     fw_get_path, fw_get_dist = floyd_warshall(grid)
 
-    waypoints = {"myhome": start_pos}
-    for i, row in df[df["struct"].notna()].iterrows():
+    all_structures = df[df["ConstructionSite"] == 0].copy()
+    waypoints = {}
+    for _, row in all_structures.iterrows():
         struct_name = str(row["struct"]).strip().replace("_", "").lower()
-        if struct_name and struct_name != "myhome":
-            waypoints[f"{struct_name}_{i}"] = (row["y"], row["x"])
+        waypoints[f"{struct_name}_{row.name}"] = (row["y"], row["x"])
 
-    waypoint_names = list(waypoints.keys())
+    bandalgom_coffee_key = None
+    myhome_key = None
+    for key in waypoints:
+        if "bandalgomcoffee" in key:
+            bandalgom_coffee_key = key
+        if "myhome" in key:
+            myhome_key = key
 
-    best_path_tsp = None
-    min_dist = float("inf")
+    if not bandalgom_coffee_key or not myhome_key:
+        print("Error: 'Bandal Gom Coffee' or 'My Home' not found in structures.")
+        return
 
-    other_waypoints = [name for name in waypoint_names if name != "myhome"]
-    for p in itertools.permutations(other_waypoints):
-        current_path_names = ["myhome"] + list(p)
-        current_dist = 0
+    other_waypoints_keys = [
+        key
+        for key in waypoints
+        if key != bandalgom_coffee_key and key != myhome_key
+    ]
 
-        for i in range(len(current_path_names) - 1):
-            start_wp_name = current_path_names[i]
-            end_wp_name = current_path_names[i + 1]
-            dist = fw_get_dist(waypoints[start_wp_name], waypoints[end_wp_name])
+    best_path_sequence = None
+    min_total_dist = float("inf")
+
+    for p in itertools.permutations(other_waypoints_keys):
+        current_sequence_keys = [bandalgom_coffee_key] + list(p) + [myhome_key]
+        current_total_dist = 0
+        path_segments = []
+
+        for i in range(len(current_sequence_keys) - 1):
+            start_wp_key = current_sequence_keys[i]
+            end_wp_key = current_sequence_keys[i + 1]
+            
+            dist = fw_get_dist(waypoints[start_wp_key], waypoints[end_wp_key])
             if dist == float("inf"):
-                current_dist = float("inf")
+                current_total_dist = float("inf")
                 break
-            current_dist += dist
+            current_total_dist += dist
+            path_segments.append(fw_get_path(waypoints[start_wp_key], waypoints[end_wp_key]))
 
-        if current_dist < min_dist:
-            min_dist = current_dist
-            best_path_tsp = current_path_names
+        if current_total_dist < min_total_dist:
+            min_total_dist = current_total_dist
+            best_path_sequence = current_sequence_keys
+            best_full_path = []
+            for segment in path_segments:
+                if segment:
+                    best_full_path.extend(segment[:-1])
+            if path_segments and path_segments[-1]:
+                best_full_path.append(path_segments[-1][-1])
 
-    if best_path_tsp:
-        full_tsp_path = []
-        for i in range(len(best_path_tsp) - 1):
-            start_node = waypoints[best_path_tsp[i]]
-            end_node = waypoints[best_path_tsp[i + 1]]
-            segment = fw_get_path(start_node, end_node)
-            if segment:
-                full_tsp_path.extend(segment[:-1])
-            else:
-                full_tsp_path = []
-                break
-        if full_tsp_path:
-            full_tsp_path.append(waypoints[best_path_tsp[-1]])
-
-        print(f"TSP Path found with distance {min_dist}: {' -> '.join(best_path_tsp)}")
-        bonus_output_filename = os.path.join(
-            base_dir, "result_img", "map_final_bonus.png"
-        )
-        draw_map_with_path(df, full_tsp_path, bonus_output_filename)
+    if best_path_sequence:
+        print(f"Optimal Path found with distance {min_total_dist}:")
+        print(" -> ".join([key.split('_')[0] for key in best_path_sequence]))
+        bonus_output_filename = os.path.join(base_dir, "result_img", "map_final_bonus.png")
+        draw_map_with_path(df, best_full_path, bonus_output_filename)
     else:
-        print("Could not find a TSP path that visits all structures.")
+        print("Could not find an optimal path that visits all structures.")
+
+    # --- Bonus: Calculating TSP Path from Bandal Gom Coffee to My Home visiting all structures (excluding construction sites) ---
+    print("\n--- Bonus: Calculating Optimal Path ---")
+
+    fw_get_path, fw_get_dist = floyd_warshall(grid)
+
+    all_structures = df[df["ConstructionSite"] == 0].copy()
+    waypoints = {}
+    for _, row in all_structures.iterrows():
+        struct_name = str(row["struct"]).strip().replace("_", "").lower()
+        waypoints[f"{struct_name}_{row.name}"] = (row["y"], row["x"])
+
+    bandalgom_coffee_key = None
+    myhome_key = None
+    for key in waypoints:
+        if "bandalgomcoffee" in key:
+            bandalgom_coffee_key = key
+        if "myhome" in key:
+            myhome_key = key
+
+    if not bandalgom_coffee_key or not myhome_key:
+        print("Error: 'Bandal Gom Coffee' or 'My Home' not found in structures.")
+        return
+
+    other_waypoints_keys = [
+        key
+        for key in waypoints
+        if key != bandalgom_coffee_key and key != myhome_key
+    ]
+
+    best_path_sequence = None
+    min_total_dist = float("inf")
+
+    for p in itertools.permutations(other_waypoints_keys):
+        current_sequence_keys = [bandalgom_coffee_key] + list(p) + [myhome_key]
+        current_total_dist = 0
+        path_segments = []
+
+        for i in range(len(current_sequence_keys) - 1):
+            start_wp_key = current_sequence_keys[i]
+            end_wp_key = current_sequence_keys[i + 1]
+            
+            dist = fw_get_dist(waypoints[start_wp_key], waypoints[end_wp_key])
+            if dist == float("inf"):
+                current_total_dist = float("inf")
+                break
+            current_total_dist += dist
+            path_segments.append(fw_get_path(waypoints[start_wp_key], waypoints[end_wp_key]))
+
+        if current_total_dist < min_total_dist:
+            min_total_dist = current_total_dist
+            best_path_sequence = current_sequence_keys
+            best_full_path = []
+            for segment in path_segments:
+                if segment:
+                    best_full_path.extend(segment[:-1])
+            if path_segments and path_segments[-1]:
+                best_full_path.append(path_segments[-1][-1])
+
+    if best_path_sequence:
+        print(f"Optimal Path found with distance {min_total_dist}:")
+        print(" -> ".join([key.split('_')[0] for key in best_path_sequence]))
+        bonus_output_filename = os.path.join(base_dir, "result_img", "map_final_bonus.png")
+        draw_map_with_path(df, best_full_path, bonus_output_filename)
+    else:
+        print("Could not find an optimal path that visits all structures.")
+
+    
 
 
 if __name__ == "__main__":
