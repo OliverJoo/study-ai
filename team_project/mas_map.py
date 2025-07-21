@@ -38,6 +38,8 @@ def analysis_main():
 
     # 3. Sort the final DataFrame by 'area'
     merged_df.sort_values(by="area", inplace=True)
+    print("\nStruct:")
+    print(f"{merged_df['struct'].value_counts()}\n")
 
     # Save the filtered DataFrame to a CSV file
     output_path = os.path.join(data_dir, "mas_map.csv")
