@@ -315,13 +315,12 @@ def main():
     max_x = df["x"].max() + 1
     max_y = df["y"].max() + 1
     grid = [[0] * max_x for _ in range(max_y)]
+    
     for _, row in df[df["ConstructionSite"] == 1].iterrows():
         grid[row["y"]][row["x"]] = 1
 
     my_home = df[df["struct"].str.strip().replace("_", "").str.lower() == "myhome"]
-    cafes = df[
-        df["struct"].str.strip().replace("_", "").str.lower() == "bandalgomcoffee"
-    ]
+    cafes = df[df["struct"].str.strip().replace("_", "").str.lower() == "bandalgomcoffee"]
 
     if not my_home.empty:
         my_home = my_home.iloc[0]
@@ -339,9 +338,9 @@ def main():
 
             # Change and run the pathfinding algorithm
             # path = bfs(grid, start_pos, end_pos)
-            # path = dijkstra(grid, start_pos, end_pos)
+            path = dijkstra(grid, start_pos, end_pos)
             # path = a_star(grid, start_pos, end_pos)
-            path = bellman_ford(grid, start_pos, end_pos)
+            # path = bellman_ford(grid, start_pos, end_pos)
 
             if path and (shortest_path is None or len(path) < len(shortest_path)):
                 shortest_path = path
