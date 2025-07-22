@@ -338,9 +338,9 @@ def main():
 
             # Change and run the pathfinding algorithm
             # path = bfs(grid, start_pos, end_pos)
-            path = dijkstra(grid, start_pos, end_pos)
+            # path = dijkstra(grid, start_pos, end_pos)
             # path = a_star(grid, start_pos, end_pos)
-            # path = bellman_ford(grid, start_pos, end_pos)
+            path = bellman_ford(grid, start_pos, end_pos)
 
             if path and (shortest_path is None or len(path) < len(shortest_path)):
                 shortest_path = path
