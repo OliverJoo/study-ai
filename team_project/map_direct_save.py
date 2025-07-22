@@ -118,8 +118,8 @@ def a_star(grid, start, end):
 
 
 def bellman_ford(grid, start, end):
-    """Bellman-Ford Algorithm (Single Source Shortest Path).
-    Inefficient for this grid problem but implemented for completeness."""
+    """Bellman-Ford Algorithm (Single Source Shortest Path)"""
+    
     nodes, edges, node_map, rev_node_map = grid_to_graph(grid)
     start_idx = node_map.get(start)
     end_idx = node_map.get(end)
