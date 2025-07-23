@@ -906,9 +906,9 @@ def main():
         print("=" * 70)
 
     except FileNotFoundError as e:
-        print(f"Error loading data: File not found. Details: {e}")
+        print(f"File not found. Details: {e}")
     except (KeyError, IndexError) as e:
-        print(f"Error processing data: Missing or invalid data column. Details: {e}")
+        print(f"Missing or invalid data column. Details: {e}")
     except IOError as e:
         print(f"Error saving file. Details: {e}")
     except Exception as e:

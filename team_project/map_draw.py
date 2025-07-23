@@ -15,10 +15,10 @@ def draw_main():
         df = pd.read_csv(os.path.join(data_dir, "mas_map.csv"))
 
     except FileNotFoundError as e:
-        print(f"Error loading data: File not found. Details: {e}")
+        print(f"File not found. Details: {e}")
         return
     except pd.errors.ParserError as e:
-        print(f"Error parsing data: Could not parse CSV file. Details: {e}")
+        print(f"Could not parse CSV file. Details: {e}")
         return
     except Exception as e:
         print(f"An unexpected error occurred during file loading: {e}")
@@ -116,11 +116,11 @@ def draw_main():
         print(f"Map saved to {output_path}")
 
     except KeyError as e:
-        print(f"Error processing data: A required column or key was not found. Details: {e}")
+        print(f"A required column or key was not found. Details: {e}")
     except ValueError as e:
-        print(f"Error with data values: A value is invalid or out of range. Details: {e}")
+        print(f"A value is invalid or out of range. Details: {e}")
     except IOError as e:
-        print(f"Error saving map: Could not write to file. Details: {e}")
+        print(f"Could not write to file. Details: {e}")
     except Exception as e:
         print(f"An unexpected error occurred during map drawing: {e}")
 
