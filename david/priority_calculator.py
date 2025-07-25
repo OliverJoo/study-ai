@@ -21,7 +21,7 @@ def main():
                 try:
                     float(token)
                 except ValueError:
-                    raise ValueError
+                    raise
             else:
                 if token not in operators:
                     raise ValueError
