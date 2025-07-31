@@ -27,9 +27,7 @@ def main():
                     raise ValueError
 
         # casting numbers to float without operators
-        operator_with_number = [
-            float(token) if token not in operators else token for token in input_str
-        ]
+        operator_with_number = [float(token) if token not in operators else token for token in input_str]
 
         i = 0
         while i < len(operator_with_number):
@@ -39,7 +37,7 @@ def main():
                 result = calc.multiply(
                     operator_with_number[i - 1], operator_with_number[i + 1]
                 )
-                operator_with_number[i - 1 : i + 2] = [result]
+                operator_with_number[i - 1 : i + 2] = [result] # 3 + 4 * 2 -> 3 + 8
                 i = 0
                 continue
             elif operator == "/":
